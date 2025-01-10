@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRPG用ダイスアプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        #app {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>TRPG用ダイスアプリ</h1>
+    <div id="login">
+        <p>パスワードを入力してください:</p>
+        <input type="password" id="password" placeholder="パスワード">
+        <button onclick="login()">ログイン</button>
+        <p id="error" style="color: red;"></p>
+    </div>
+    <div id="app">
+        <h2>ダイスを振る</h2>
+        <p>
+            ダイスの面数: <input type="number" id="diceSides" value="6" min="1"> 面<br>
+            ダイスの個数: <input type="number" id="diceCount" value="1" min="1"> 個
+        </p>
+        <button onclick="rollDice()">ダイスを振る</button>
+        <p id="result">結果: -</p>
+        <p id="total">合計: -</p>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
