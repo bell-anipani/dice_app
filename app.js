@@ -1,18 +1,22 @@
-// Firebase設定
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, onValue } from "firebase/database";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
-  authDomain: "dice-app-firebase.firebaseapp.com",
-  databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
-  projectId: "dice-app-firebase",
-  storageBucket: "dice-app-firebase.firebasestorage.app",
-  messagingSenderId: "1004350981299",
-  appId: "1:1004350981299:web:7acdf9960343a1d755dcc6",
-  measurementId: "G-JRD8VE3572"
+    apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
+    authDomain: "dice-app-firebase.firebaseapp.com",
+    databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
+    projectId: "dice-app-firebase",
+    storageBucket: "dice-app-firebase.firebasestorage.app",
+    messagingSenderId: "1004350981299",
+    appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
+    measurementId: "G-0ES2C2KN9J"
 };
 
-// Firebase初期化
-const app = firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
@@ -54,8 +58,8 @@ function rollDice() {
     document.getElementById("total").textContent = `合計: ${total}`;
 
     // Firebaseに結果を保存
-    const diceRollRef = database.ref("diceRolls").push();
-    diceRollRef.set({
+    const diceRollRef = ref(database, "diceRolls").push();
+    set(diceRollRef, {
         results: results,
         total: total,
         timestamp: Date.now()
@@ -63,9 +67,9 @@ function rollDice() {
 }
 
 // Firebaseのデータ変更を監視して最新の結果を全員に反映
-const diceRollsRef = database.ref("diceRolls");
+const diceRollsRef = ref(database, "diceRolls");
 
-diceRollsRef.on("value", (snapshot) => {
+onValue(diceRollsRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
         const latestRoll = Object.values(data).pop(); // 最新のロールを取得
