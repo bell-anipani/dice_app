@@ -64,10 +64,6 @@ window.rollDice = function() { // グローバルスコープに追加
         results: results,
         total: total,
         timestamp: Date.now()
-    }).then(() => {
-        console.log("データがFirebaseに保存されました");
-    }).catch((error) => {
-        console.error("データの保存中にエラーが発生しました:", error);
     });
 };
 
@@ -76,9 +72,16 @@ const diceRollsRef = ref(database, 'diceRolls');
 
 onValue(diceRollsRef, (snapshot) => {
     const data = snapshot.val();
+    const resultsContainer = document.getElementById("resultsContainer");
+    resultsContainer.innerHTML = ""; // 既存の結果をクリア
+
     if (data) {
-        const latestRoll = Object.values(data).pop(); // 最新のロールを取得
-        document.getElementById("result").textContent = `結果: ${latestRoll.results.join(", ")}`;
-        document.getElementById("total").textContent = `合計: ${latestRoll.total}`;
+        // すべての結果を表示
+        for (const key in data) {
+            const roll = data[key];
+            const resultItem = document.createElement("div");
+            resultItem.textContent = `結果: ${roll.results.join(", ")} (合計: ${roll.total})`;
+            resultsContainer.appendChild(resultItem);
+        }
     }
 });
