@@ -35,11 +35,13 @@ window.login = function() {
 };
 
 // ダイスロール機能
-function rollDice() {
+window.rollDice = function() { // グローバルスコープに追加
     const diceSides = parseInt(document.getElementById("diceSides").value);
     const diceCount = parseInt(document.getElementById("diceCount").value);
     let results = [];
     let total = 0;
+
+    console.log(`振るダイスの面数: ${diceSides}, ダイスの個数: ${diceCount}`); // デバッグ用
 
     if (diceSides <= 0 || diceCount <= 0) {
         document.getElementById("result").textContent = "面数と個数は正の数を入力してください。";
@@ -64,8 +66,12 @@ function rollDice() {
         results: results,
         total: total,
         timestamp: Date.now()
+    }).then(() => {
+        console.log("データがFirebaseに保存されました");
+    }).catch((error) => {
+        console.error("データの保存中にエラーが発生しました:", error);
     });
-}
+};
 
 // Firebaseのデータ変更を監視して最新の結果を全員に反映
 const diceRollsRef = ref(database, 'diceRolls');
