@@ -13,7 +13,7 @@ const firebaseConfig = {
     appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
     measurementId: "G-0ES2C2KN9J"
 };
- 
+
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
@@ -21,7 +21,8 @@ const database = getDatabase(app);
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
 
-function login() {
+// login関数をwindowオブジェクトに追加
+window.login = function() {
     const inputPassword = document.getElementById("password").value;
     const errorElement = document.getElementById("error");
 
@@ -31,7 +32,7 @@ function login() {
     } else {
         errorElement.textContent = "パスワードが間違っています。";
     }
-}
+};
 
 // ダイスロール機能
 function rollDice() {
