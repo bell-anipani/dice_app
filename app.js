@@ -1,24 +1,24 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+// Firebase SDKのインポート
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-analytics.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js";
 
-// Your web app's Firebase configuration
+// Firebase設定
 const firebaseConfig = {
-    apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
-    authDomain: "dice-app-firebase.firebaseapp.com",
-    databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
-    projectId: "dice-app-firebase",
-    storageBucket: "dice-app-firebase.firebasestorage.app",
-    messagingSenderId: "1004350981299",
-    appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
-    measurementId: "G-0ES2C2KN9J"
+  apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
+  authDomain: "dice-app-firebase.firebaseapp.com",
+  databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
+  projectId: "dice-app-firebase",
+  storageBucket: "dice-app-firebase.firebasestorage.app",
+  messagingSenderId: "1004350981299",
+  appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
+  measurementId: "G-0ES2C2KN9J"
 };
 
-// Initialize Firebase
+// Firebase初期化
 const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 const analytics = getAnalytics(app);
-const database = getDatabase(app); // Realtime Databaseを初期化
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
@@ -60,7 +60,7 @@ function rollDice() {
     document.getElementById("total").textContent = `合計: ${total}`;
 
     // Firebaseに結果を保存
-    const diceRollRef = ref(database, "diceRolls").push();
+    const diceRollRef = ref(database, 'diceRolls').push();
     set(diceRollRef, {
         results: results,
         total: total,
@@ -69,7 +69,7 @@ function rollDice() {
 }
 
 // Firebaseのデータ変更を監視して最新の結果を全員に反映
-const diceRollsRef = ref(database, "diceRolls");
+const diceRollsRef = ref(database, 'diceRolls');
 
 onValue(diceRollsRef, (snapshot) => {
     const data = snapshot.val();
