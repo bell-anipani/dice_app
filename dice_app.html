@@ -34,6 +34,63 @@
         <p id="result">結果: -</p>
         <p id="total">合計: -</p>
     </div>
-    <script src="app.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
+            authDomain: "dice-app-firebase.firebaseapp.com",
+            databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
+            projectId: "dice-app-firebase",
+            storageBucket: "dice-app-firebase.firebasestorage.app",
+            messagingSenderId: "1004350981299",
+            appId: "1:1004350981299:web:7acdf9960343a1d755dcc6",
+            measurementId: "G-JRD8VE3572"
+          };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function rollDice() {
+            const diceSides = document.getElementById("diceSides").value;
+            const diceCount = document.getElementById("diceCount").value;
+            const results = [];
+
+            for (let i = 0; i < diceCount; i++) {
+                results.push(Math.floor(Math.random() * diceSides) + 1);
+            }
+
+            const total = results.reduce((acc, val) => acc + val, 0);
+
+            // 結果をFirebaseに保存
+            const diceRollRef = firebase.database().ref('diceRolls').push();
+            diceRollRef.set({ results, total });
+
+            document.getElementById("result").textContent = `結果: ${results.join(", ")}`;
+            document.getElementById("total").textContent = `合計: ${total}`;
+        }
+
+        const diceRollsRef = firebase.database().ref('diceRolls');
+        diceRollsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const latestRoll = Object.values(data).pop();
+                document.getElementById("result").textContent = `結果: ${latestRoll.results.join(", ")}`;
+                document.getElementById("total").textContent = `合計: ${latestRoll.total}`;
+            }
+        });
+
+        function login() {
+            const passwordInput = document.getElementById("password").value;
+            if (passwordInput === "your_password") {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("app").style.display = "block";
+            } else {
+                document.getElementById("error").textContent = "パスワードが間違っています。";
+            }
+        }
+    </script>
 </body>
 </html>
