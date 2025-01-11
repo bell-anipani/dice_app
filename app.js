@@ -1,24 +1,22 @@
 // Firebase SDKのインポート
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-analytics.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 // Firebase設定
 const firebaseConfig = {
-  apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
-  authDomain: "dice-app-firebase.firebaseapp.com",
-  databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
-  projectId: "dice-app-firebase",
-  storageBucket: "dice-app-firebase.firebasestorage.app",
-  messagingSenderId: "1004350981299",
-  appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
-  measurementId: "G-0ES2C2KN9J"
+    apiKey: "AIzaSyBFfOtB77exnq23yp_E7zEWhhZ8td2lpOk",
+    authDomain: "dice-app-firebase.firebaseapp.com",
+    databaseURL: "https://dice-app-firebase-default-rtdb.firebaseio.com",
+    projectId: "dice-app-firebase",
+    storageBucket: "dice-app-firebase.firebasestorage.app",
+    messagingSenderId: "1004350981299",
+    appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
+    measurementId: "G-0ES2C2KN9J"
 };
 
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
-const analytics = getAnalytics(app);
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
