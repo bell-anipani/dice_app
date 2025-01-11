@@ -1,6 +1,7 @@
 // Firebase SDKのインポート
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -16,7 +17,8 @@ const firebaseConfig = {
 
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const analytics = getAnalytics(app);
+const database = getDatabase(app); // Databaseの取得
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
