@@ -71,6 +71,8 @@
 
         // ダイスロール機能
         function rollDice() {
+            // ダイスロール機能
+        function rollDice() {
             const diceSides = parseInt(document.getElementById("diceSides").value);
             const diceCount = parseInt(document.getElementById("diceCount").value);
             let results = [];
@@ -88,32 +90,27 @@
                 total += roll;
             }
 
+            // 結果を画面に表示
             document.getElementById("result").textContent = `結果: ${results.join(", ")}`;
             document.getElementById("total").textContent = `合計: ${total}`;
-            writeDiceResult({ results, total }); // 結果をFirebaseに書き込む
-        }
 
-        // データ書き込み
-        function writeDiceResult(data) {
-            const dbRef = firebase.database().ref('diceResults/');
-            dbRef.set(data)
-                .then(() => console.log("データが保存されました"))
-                .catch((error) => console.error("データの保存中にエラー:", error));
-        }
-
-        // データ読み込み
-        function listenForDiceResults() {
-            const dbRef = firebase.database().ref('diceResults/');
-            dbRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                console.log("データが更新されました:", data);
+            // Firebaseに結果を保存
+            const diceRollRef = ref(database, 'diceRolls').push(); // データの保存先を指定
+            set(diceRollRef, {
+                results: results,
+                total: total,
+                timestamp: Date.now()
             });
         }
 
-        // ログイン後にデータを監視
-        function startApp() {
-            listenForDiceResults(); // データの監視を開始
-        }
-    </script>
-</body>
-</html>
+        // Firebaseのデータ変更を監視して最新の結果を全員に反映
+        const diceRollsRef = ref(database, 'diceRolls');
+
+        onValue(diceRollsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const latestRoll = Object.values(data).pop(); // 最新のロールを取得
+                document.getElementById("result").textContent = `結果: ${latestRoll.results.join(", ")}`;
+                document.getElementById("total").textContent = `合計: ${latestRoll.total}`;
+            }
+        });
