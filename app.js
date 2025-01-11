@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 
 // Your web app's Firebase configuration
@@ -16,7 +17,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const analytics = getAnalytics(app);
+const database = getDatabase(app); // Realtime Databaseを初期化
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
