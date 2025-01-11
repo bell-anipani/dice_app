@@ -13,7 +13,7 @@ const firebaseConfig = {
     appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
     measurementId: "G-0ES2C2KN9J"
 };
-
+ 
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
