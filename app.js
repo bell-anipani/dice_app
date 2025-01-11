@@ -21,7 +21,7 @@ const database = getDatabase(app);
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
 
-// login関数をwindowオブジェクトに追加
+// login関数をグローバルに定義
 window.login = function() {
     const inputPassword = document.getElementById("password").value;
     const errorElement = document.getElementById("error");
