@@ -1,5 +1,3 @@
-// app.js
-
 // Firebase SDKのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
@@ -42,8 +40,6 @@ window.rollDice = function() { // グローバルスコープに追加
     const diceCount = parseInt(document.getElementById("diceCount").value);
     let results = [];
     let total = 0;
-
-    console.log(`振るダイスの面数: ${diceSides}, ダイスの個数: ${diceCount}`); // デバッグ用
 
     if (diceSides <= 0 || diceCount <= 0) {
         document.getElementById("result").textContent = "面数と個数は正の数を入力してください。";
