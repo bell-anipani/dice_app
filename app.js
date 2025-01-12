@@ -1,6 +1,6 @@
 // Firebase SDKのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, set, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, set, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -34,11 +34,31 @@ window.login = function() {
 };
 
 // ログを表示する関数
-function addLogEntry(text) {
+function addLogEntry(text, id) {
     const logContainer = document.getElementById("logContainer");
+
+    // ログエントリのコンテナ作成
     const logEntry = document.createElement("div");
     logEntry.className = "log-entry";
-    logEntry.textContent = text;
+    logEntry.dataset.id = id;
+
+    // 削除ボタンの作成
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "削除";
+    deleteButton.onclick = () => {
+        if (confirm("ログを削除しますか？")) {
+            const logRef = ref(database, `logs/${id}`);
+            remove(logRef);
+        }
+    };
+
+    // ログメッセージの追加
+    const logText = document.createElement("span");
+    logText.textContent = text;
+
+    // コンテナに要素を追加
+    logEntry.appendChild(deleteButton);
+    logEntry.appendChild(logText);
     logContainer.appendChild(logEntry);
 
     // スクロールを一番下にする
@@ -69,9 +89,8 @@ window.rollDice = function() {
     document.getElementById("result").textContent = `結果: ${results.join(", ")}`;
     document.getElementById("total").textContent = `合計: ${total}`;
 
-    // ログに追加
+    // ログメッセージの作成
     const logMessage = `ダイス結果: ${results.join(", ")} (合計: ${total})`;
-    addLogEntry(logMessage);
 
     // Firebaseにログを保存
     const logsRef = ref(database, "logs");
@@ -86,5 +105,5 @@ const logsRef = ref(database, "logs");
 
 onChildAdded(logsRef, (data) => {
     const log = data.val();
-    addLogEntry(log.message);
+    addLogEntry(log.message, data.key);
 });
