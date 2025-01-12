@@ -19,10 +19,10 @@ const database = getDatabase(app);
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
-let userName = ""; // ログイン名を保持
+let userName = ""; // 現在の選択されたプレイヤー名
 
 // login関数をグローバルに定義
-window.login = function() {
+window.login = function () {
     const inputPassword = document.getElementById("password").value;
     const inputName = document.getElementById("name").value;
     const errorElement = document.getElementById("error");
@@ -31,17 +31,38 @@ window.login = function() {
         userName = inputName || "匿名"; // 名前が空の場合はデフォルトで "匿名"
         document.getElementById("login").style.display = "none";
         document.getElementById("app").style.display = "block";
-        document.getElementById("userNameDisplay").value = userName; // 初期値を設定
+        document.getElementById("userNameInput").value = userName; // 初期値を設定
     } else {
         errorElement.textContent = "パスワードが間違っています。";
     }
 };
 
+// チェックボックスの挙動を設定
+window.toggleNameInput = function (source) {
+    const userInputCheckbox = document.getElementById("userNameCheckbox");
+    const userListCheckbox = document.getElementById("userListCheckbox");
+
+    if (source === "input") {
+        userListCheckbox.checked = !userInputCheckbox.checked;
+    } else if (source === "list") {
+        userInputCheckbox.checked = !userListCheckbox.checked;
+    }
+};
+
 // ダイスロール機能
-window.rollDice = function() {
+window.rollDice = function () {
     const diceSides = parseInt(document.getElementById("diceSides").value);
     const diceCount = parseInt(document.getElementById("diceCount").value);
-    userName = document.getElementById("userNameDisplay").value || "匿名"; // 最新の名前を取得
+    const userInputCheckbox = document.getElementById("userNameCheckbox").checked;
+    const userListCheckbox = document.getElementById("userListCheckbox").checked;
+
+    // チェックが入っている方の名前を使用
+    if (userInputCheckbox) {
+        userName = document.getElementById("userNameInput").value || "匿名";
+    } else if (userListCheckbox) {
+        userName = document.getElementById("userNameList").value || "匿名";
+    }
+
     let results = [];
     let total = 0;
 
@@ -86,14 +107,15 @@ onValue(logsRef, (snapshot) => {
     updateLogWindow(logs);
 });
 
-// ログ窓の更新関数
+// ログ窓の更新関数（自動スクロール機能を追加）
 function updateLogWindow(logs) {
     const logTextArea = document.getElementById("logWindow");
     logTextArea.value = logs.join("\n");
+    logTextArea.scrollTop = logTextArea.scrollHeight; // スクロールを最下部に移動
 }
 
 // すべてのログを削除
-window.clearAllLogs = function() {
+window.clearAllLogs = function () {
     if (confirm("すべてのログを削除しますか？")) {
         remove(logsRef).then(() => {
             logs = []; // ローカルのログ配列もリセット
