@@ -4,40 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRPG用ダイスアプリ</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+        #main {
+            flex: 3;
             padding: 20px;
+            text-align: center;
+        }
+        #logs {
+            flex: 1;
+            padding: 10px;
+            border-left: 1px solid #ccc;
+            overflow-y: auto;
         }
         #app {
             display: none;
         }
+        .log-entry {
+            margin: 5px 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>TRPG用ダイスアプリ</h1>
-    <div id="login">
-        <p>パスワードを入力してください:</p>
-        <input type="password" id="password" placeholder="パスワード">
-        <button onclick="login()">ログイン</button>
-        <p id="error" style="color: red;"></p>
-    </div>
-    <div id="app">
-        <h2>ダイスを振る</h2>
-        <p>
-            ダイスの面数: <input type="number" id="diceSides" value="6" min="1"> 面<br>
-            ダイスの個数: <input type="number" id="diceCount" value="1" min="1"> 個
-        </p>
-        <button onclick="rollDice()">ダイスを振る</button>
-        <p id="result">結果: -</p>
-        <p id="total">合計: -</p>
-        <div id="resultsContainer">
-            <!-- ここに結果が表示されます -->
+    <div id="main">
+        <h1>TRPG用ダイスアプリ</h1>
+        <div id="login">
+            <p>パスワードを入力してください:</p>
+            <input type="password" id="password" placeholder="パスワード">
+            <button onclick="login()">ログイン</button>
+            <p id="error" style="color: red;"></p>
         </div>
+        <div id="app">
+            <h2>ダイスを振る</h2>
+            <p>
+                ダイスの面数: <input type="number" id="diceSides" value="6" min="1"> 面<br>
+                ダイスの個数: <input type="number" id="diceCount" value="1" min="1"> 個
+            </p>
+            <button onclick="rollDice()">ダイスを振る</button>
+            <p id="result">結果: -</p>
+            <p id="total">合計: -</p>
+        </div>
+    </div>
+    <div id="logs">
+        <h2>ログ</h2>
+        <div id="logContainer"></div>
     </div>
     <script type="module" src="app.js"></script>
 </body>
