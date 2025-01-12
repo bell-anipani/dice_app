@@ -1,6 +1,6 @@
 // Firebase SDKのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, set, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -33,25 +33,10 @@ window.login = function() {
     }
 };
 
-// ログを表示する関数
-function addLogEntry(text, id) {
-    const logContainer = document.getElementById("logContainer");
-
-    // ログエントリのコンテナ作成
-    const logEntry = document.createElement("div");
-    logEntry.className = "log-entry";
-    logEntry.dataset.id = id;
-
-    // ログメッセージの追加
-    const logText = document.createElement("span");
-    logText.textContent = text;
-
-    // コンテナに要素を追加
-    logEntry.appendChild(logText);
-    logContainer.appendChild(logEntry);
-
-    // スクロールを一番下にする
-    logContainer.scrollTop = logContainer.scrollHeight;
+// ログ窓の更新関数
+function updateLogWindow(logs) {
+    const logTextArea = document.getElementById("logWindow");
+    logTextArea.value = logs.join("\n");
 }
 
 // ダイスロール機能
@@ -91,18 +76,23 @@ window.rollDice = function() {
 
 // Firebaseのデータ変更を監視してログ窓を更新
 const logsRef = ref(database, "logs");
+let logs = []; // ログの配列
 
-onChildAdded(logsRef, (data) => {
-    const log = data.val();
-    addLogEntry(log.message, data.key);
+onValue(logsRef, (snapshot) => {
+    logs = [];
+    snapshot.forEach((childSnapshot) => {
+        const log = childSnapshot.val();
+        logs.push(log.message);
+    });
+    updateLogWindow(logs);
 });
 
 // すべてのログを削除
 window.clearAllLogs = function() {
     if (confirm("すべてのログを削除しますか？")) {
         remove(logsRef).then(() => {
-            const logContainer = document.getElementById("logContainer");
-            logContainer.innerHTML = ""; // 画面上のログもすべて削除
+            logs = []; // ローカルのログ配列もリセット
+            updateLogWindow(logs); // ログ窓を空にする
         });
     }
 };
