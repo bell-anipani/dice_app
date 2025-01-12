@@ -1,6 +1,6 @@
 // Firebase SDKのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -18,27 +18,26 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // パスワード認証
-const correctPassword = "anipani"; // 設定したいパスワードをここに記載
-let userName = ""; // 現在の選択されたプレイヤー名
-let userColor = "#000000"; // デフォルトの色（黒）
+const correctPassword = "anipani";
+let userName = ""; // 選択されたプレイヤー名
+let userColor = "#000000"; // デフォルトの色
 
-// login関数をグローバルに定義
 window.login = function () {
     const inputPassword = document.getElementById("password").value;
     const inputName = document.getElementById("name").value;
     const errorElement = document.getElementById("error");
 
     if (inputPassword === correctPassword) {
-        userName = inputName || "匿名"; // 名前が空の場合はデフォルトで "匿名"
+        userName = inputName || "匿名";
         document.getElementById("login").style.display = "none";
         document.getElementById("app").style.display = "block";
-        document.getElementById("userNameInput").value = userName; // 初期値を設定
+        document.getElementById("userNameInput").value = userName; // 初期値設定
     } else {
         errorElement.textContent = "パスワードが間違っています。";
     }
 };
 
-// チェックボックスの挙動を設定
+// チェックボックス挙動
 window.toggleNameInput = function (source) {
     const userInputCheckbox = document.getElementById("userNameCheckbox");
     const userListCheckbox = document.getElementById("userListCheckbox");
@@ -57,24 +56,23 @@ window.rollDice = function () {
     const userInputCheckbox = document.getElementById("userNameCheckbox").checked;
     const userListCheckbox = document.getElementById("userListCheckbox").checked;
 
-    // チェックが入っている方の名前を使用
     if (userInputCheckbox) {
         userName = document.getElementById("userNameInput").value || "匿名";
-        userColor = document.getElementById("userNameColor").value || "#000000"; // カラーピッカー追加
+        userColor = "#000000"; // 名前入力はデフォルト色
     } else if (userListCheckbox) {
         const selectedOption = document.getElementById("userNameList").selectedOptions[0];
         userName = selectedOption.value || "匿名";
         userColor = selectedOption.getAttribute("data-color") || "#000000";
     }
 
-    let results = [];
-    let total = 0;
-
     if (diceSides <= 0 || diceCount <= 0) {
         document.getElementById("result").textContent = "面数と個数は正の数を入力してください。";
         document.getElementById("total").textContent = "合計: -";
         return;
     }
+
+    let results = [];
+    let total = 0;
 
     // ダイスを振る
     for (let i = 0; i < diceCount; i++) {
@@ -83,14 +81,14 @@ window.rollDice = function () {
         total += roll;
     }
 
-    // 結果を画面に表示
+    // 結果を表示
     document.getElementById("result").textContent = `結果: ${results.join(", ")}`;
     document.getElementById("total").textContent = `合計: ${total}`;
 
-    // ログメッセージの作成
+    // ログメッセージ作成
     const logMessage = `<span style="color: ${userColor};">ダイス結果 {${userName}}:</span> ${results.join(", ")} (合計: ${total})`;
 
-    // Firebaseにログを保存
+    // Firebaseに保存
     const logsRef = ref(database, "logs");
     push(logsRef, {
         message: logMessage,
@@ -98,9 +96,9 @@ window.rollDice = function () {
     });
 };
 
-// Firebaseのデータ変更を監視してログ窓を更新
+// Firebaseデータ監視
 const logsRef = ref(database, "logs");
-let logs = []; // ログの配列
+let logs = [];
 
 onValue(logsRef, (snapshot) => {
     logs = [];
@@ -111,35 +109,19 @@ onValue(logsRef, (snapshot) => {
     updateLogWindow(logs);
 });
 
-const logData = {
-    userName,
-    userColor,
-    results,
-    total
-};
-
-// Firebaseに保存
-push(logsRef, {
-    ...logData,
-    timestamp: Date.now()
-});
-
-// データをログ窓に表示
+// ログ窓の更新
 function updateLogWindow(logs) {
     const logTextArea = document.getElementById("logWindow");
-    const isAtBottom = logTextArea.scrollHeight - logTextArea.scrollTop <= logTextArea.clientHeight + 10;
-
     logTextArea.innerHTML = logs.join("<br>");
-    if (isAtBottom) {
-        logTextArea.scrollTop = logTextArea.scrollHeight; // 画面が最下部の場合のみスクロール
-    }
+    logTextArea.scrollTop = logTextArea.scrollHeight; // スクロールを最下部に移動
 }
 
 // すべてのログを削除
 window.clearAllLogs = function () {
     if (confirm("すべてのログを削除しますか？")) {
         remove(logsRef).then(() => {
-            console.log("ログが正常に削除されました。");
+            logs = [];
+            updateLogWindow(logs);
         }).catch(error => {
             console.error("ログ削除中にエラーが発生しました:", error);
         });
