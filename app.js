@@ -42,22 +42,11 @@ function addLogEntry(text, id) {
     logEntry.className = "log-entry";
     logEntry.dataset.id = id;
 
-    // 削除ボタンの作成
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "削除";
-    deleteButton.onclick = () => {
-        if (confirm("ログを削除しますか？")) {
-            const logRef = ref(database, `logs/${id}`);
-            remove(logRef);
-        }
-    };
-
     // ログメッセージの追加
     const logText = document.createElement("span");
     logText.textContent = text;
 
     // コンテナに要素を追加
-    logEntry.appendChild(deleteButton);
     logEntry.appendChild(logText);
     logContainer.appendChild(logEntry);
 
@@ -107,3 +96,13 @@ onChildAdded(logsRef, (data) => {
     const log = data.val();
     addLogEntry(log.message, data.key);
 });
+
+// すべてのログを削除
+window.clearAllLogs = function() {
+    if (confirm("すべてのログを削除しますか？")) {
+        remove(logsRef).then(() => {
+            const logContainer = document.getElementById("logContainer");
+            logContainer.innerHTML = ""; // 画面上のログもすべて削除
+        });
+    }
+};
