@@ -20,8 +20,11 @@
 <body>
     <h1>TRPG用ダイスアプリ</h1>
     <div id="login">
-        <p>パスワードを入力してください:</p>
+        <p>名前とパスワードを入力してください:</p>
+        <input type="text" id="name" placeholder="名前">
+        <br><br>
         <input type="password" id="password" placeholder="パスワード">
+        <br><br>
         <button onclick="login()">ログイン</button>
         <p id="error" style="color: red;"></p>
     </div>
@@ -30,6 +33,9 @@
         <p>
             ダイスの面数: <input type="number" id="diceSides" value="6" min="1"> 面<br>
             ダイスの個数: <input type="number" id="diceCount" value="1" min="1"> 個
+        </p>
+        <p>
+            プレイヤー名: <input type="text" id="userNameDisplay" placeholder="名前を入力">
         </p>
         <button onclick="rollDice()">ダイスを振る</button>
         <p id="result">結果: -</p>
