@@ -1,7 +1,6 @@
 // Firebase SDKのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+import { getDatabase, ref, set, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -11,14 +10,12 @@ const firebaseConfig = {
     projectId: "dice-app-firebase",
     storageBucket: "dice-app-firebase.firebasestorage.app",
     messagingSenderId: "1004350981299",
-    appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6",
-    measurementId: "G-0ES2C2KN9J"
+    appId: "1:1004350981299:web:d0770ec75c0288cf55dcc6"
 };
 
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase(app); // Databaseの取得
+const database = getDatabase(app);
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
@@ -36,8 +33,20 @@ window.login = function() {
     }
 };
 
+// ログを表示する関数
+function addLogEntry(text) {
+    const logContainer = document.getElementById("logContainer");
+    const logEntry = document.createElement("div");
+    logEntry.className = "log-entry";
+    logEntry.textContent = text;
+    logContainer.appendChild(logEntry);
+
+    // スクロールを一番下にする
+    logContainer.scrollTop = logContainer.scrollHeight;
+}
+
 // ダイスロール機能
-window.rollDice = function() { // グローバルスコープに追加
+window.rollDice = function() {
     const diceSides = parseInt(document.getElementById("diceSides").value);
     const diceCount = parseInt(document.getElementById("diceCount").value);
     let results = [];
@@ -60,30 +69,22 @@ window.rollDice = function() { // グローバルスコープに追加
     document.getElementById("result").textContent = `結果: ${results.join(", ")}`;
     document.getElementById("total").textContent = `合計: ${total}`;
 
-    // Firebaseに結果を保存
-    const diceRollRef = ref(database, 'diceRolls').push();
-    set(diceRollRef, {
-        results: results,
-        total: total,
+    // ログに追加
+    const logMessage = `ダイス結果: ${results.join(", ")} (合計: ${total})`;
+    addLogEntry(logMessage);
+
+    // Firebaseにログを保存
+    const logsRef = ref(database, "logs");
+    push(logsRef, {
+        message: logMessage,
         timestamp: Date.now()
     });
 };
 
-// Firebaseのデータ変更を監視して最新の結果を全員に反映
-const diceRollsRef = ref(database, 'diceRolls');
+// Firebaseのデータ変更を監視してログ窓を更新
+const logsRef = ref(database, "logs");
 
-onValue(diceRollsRef, (snapshot) => {
-    const data = snapshot.val();
-    const resultsContainer = document.getElementById("resultsContainer");
-    resultsContainer.innerHTML = ""; // 既存の結果をクリア
-
-    if (data) {
-        // すべての結果を表示
-        for (const key in data) {
-            const roll = data[key];
-            const resultItem = document.createElement("div");
-            resultItem.textContent = `結果: ${roll.results.join(", ")} (合計: ${roll.total})`;
-            resultsContainer.appendChild(resultItem);
-        }
-    }
+onChildAdded(logsRef, (data) => {
+    const log = data.val();
+    addLogEntry(log.message);
 });
