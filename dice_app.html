@@ -54,10 +54,13 @@
             <p id="total">合計: -</p>
         </div>
     </div>
-    <div id="logs">
-        <h2>ログ</h2>
-        <div id="logContainer"></div>
-    </div>
+    <div id="logHeader">
+        <h3 style="display: inline;">ログ</h3>
+   　　 <button onclick="clearAllLogs()" style="margin-left: 10px;">すべて削除</button>
+　　</div>
+　　<div id="logContainer" style="border: 1px solid #ccc; height: 200px; overflow-y: scroll; margin-top: 10px; padding: 5px;">
+    <!-- ログがここに追加されます -->
+　　</div>
     <script type="module" src="app.js"></script>
 </body>
 </html>
