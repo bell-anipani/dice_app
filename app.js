@@ -20,6 +20,7 @@ const database = getDatabase(app);
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
 let userName = ""; // 現在の選択されたプレイヤー名
+let userColor = "#000000"; // デフォルトの色（黒）
 
 // login関数をグローバルに定義
 window.login = function () {
@@ -59,8 +60,11 @@ window.rollDice = function () {
     // チェックが入っている方の名前を使用
     if (userInputCheckbox) {
         userName = document.getElementById("userNameInput").value || "匿名";
+        userColor = "#000000"; // 入力の場合はデフォルトの黒
     } else if (userListCheckbox) {
-        userName = document.getElementById("userNameList").value || "匿名";
+        const selectedOption = document.getElementById("userNameList").selectedOptions[0];
+        userName = selectedOption.value || "匿名";
+        userColor = selectedOption.getAttribute("data-color") || "#000000";
     }
 
     let results = [];
@@ -84,7 +88,7 @@ window.rollDice = function () {
     document.getElementById("total").textContent = `合計: ${total}`;
 
     // ログメッセージの作成
-    const logMessage = `ダイス結果 {${userName}}: ${results.join(", ")} (合計: ${total})`;
+    const logMessage = `<span style="color: ${userColor};">ダイス結果 {${userName}}:</span> ${results.join(", ")} (合計: ${total})`;
 
     // Firebaseにログを保存
     const logsRef = ref(database, "logs");
@@ -110,7 +114,7 @@ onValue(logsRef, (snapshot) => {
 // ログ窓の更新関数（自動スクロール機能を追加）
 function updateLogWindow(logs) {
     const logTextArea = document.getElementById("logWindow");
-    logTextArea.value = logs.join("\n");
+    logTextArea.innerHTML = logs.join("<br>");
     logTextArea.scrollTop = logTextArea.scrollHeight; // スクロールを最下部に移動
 }
 
