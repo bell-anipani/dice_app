@@ -19,30 +19,29 @@ const database = getDatabase(app);
 
 // パスワード認証
 const correctPassword = "anipani"; // 設定したいパスワードをここに記載
+let userName = ""; // ログイン名を保持
 
 // login関数をグローバルに定義
 window.login = function() {
     const inputPassword = document.getElementById("password").value;
+    const inputName = document.getElementById("name").value;
     const errorElement = document.getElementById("error");
 
     if (inputPassword === correctPassword) {
+        userName = inputName || "匿名"; // 名前が空の場合はデフォルトで "匿名"
         document.getElementById("login").style.display = "none";
         document.getElementById("app").style.display = "block";
+        document.getElementById("userNameDisplay").value = userName; // 初期値を設定
     } else {
         errorElement.textContent = "パスワードが間違っています。";
     }
 };
 
-// ログ窓の更新関数
-function updateLogWindow(logs) {
-    const logTextArea = document.getElementById("logWindow");
-    logTextArea.value = logs.join("\n");
-}
-
 // ダイスロール機能
 window.rollDice = function() {
     const diceSides = parseInt(document.getElementById("diceSides").value);
     const diceCount = parseInt(document.getElementById("diceCount").value);
+    userName = document.getElementById("userNameDisplay").value || "匿名"; // 最新の名前を取得
     let results = [];
     let total = 0;
 
@@ -64,7 +63,7 @@ window.rollDice = function() {
     document.getElementById("total").textContent = `合計: ${total}`;
 
     // ログメッセージの作成
-    const logMessage = `ダイス結果: ${results.join(", ")} (合計: ${total})`;
+    const logMessage = `ダイス結果 {${userName}}: ${results.join(", ")} (合計: ${total})`;
 
     // Firebaseにログを保存
     const logsRef = ref(database, "logs");
@@ -86,6 +85,12 @@ onValue(logsRef, (snapshot) => {
     });
     updateLogWindow(logs);
 });
+
+// ログ窓の更新関数
+function updateLogWindow(logs) {
+    const logTextArea = document.getElementById("logWindow");
+    logTextArea.value = logs.join("\n");
+}
 
 // すべてのログを削除
 window.clearAllLogs = function() {
