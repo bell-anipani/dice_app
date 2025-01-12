@@ -60,7 +60,7 @@ window.rollDice = function () {
     // チェックが入っている方の名前を使用
     if (userInputCheckbox) {
         userName = document.getElementById("userNameInput").value || "匿名";
-        userColor = "#000000"; // 入力の場合はデフォルトの黒
+        userColor = document.getElementById("userNameColor").value || "#000000"; // カラーピッカー追加
     } else if (userListCheckbox) {
         const selectedOption = document.getElementById("userNameList").selectedOptions[0];
         userName = selectedOption.value || "匿名";
@@ -111,19 +111,37 @@ onValue(logsRef, (snapshot) => {
     updateLogWindow(logs);
 });
 
-// ログ窓の更新関数（自動スクロール機能を追加）
+const logData = {
+    userName,
+    userColor,
+    results,
+    total
+};
+
+// Firebaseに保存
+push(logsRef, {
+    ...logData,
+    timestamp: Date.now()
+});
+
+// データをログ窓に表示
 function updateLogWindow(logs) {
     const logTextArea = document.getElementById("logWindow");
+    const isAtBottom = logTextArea.scrollHeight - logTextArea.scrollTop <= logTextArea.clientHeight + 10;
+
     logTextArea.innerHTML = logs.join("<br>");
-    logTextArea.scrollTop = logTextArea.scrollHeight; // スクロールを最下部に移動
+    if (isAtBottom) {
+        logTextArea.scrollTop = logTextArea.scrollHeight; // 画面が最下部の場合のみスクロール
+    }
 }
 
 // すべてのログを削除
 window.clearAllLogs = function () {
     if (confirm("すべてのログを削除しますか？")) {
         remove(logsRef).then(() => {
-            logs = []; // ローカルのログ配列もリセット
-            updateLogWindow(logs); // ログ窓を空にする
+            console.log("ログが正常に削除されました。");
+        }).catch(error => {
+            console.error("ログ削除中にエラーが発生しました:", error);
         });
     }
 };
