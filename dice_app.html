@@ -15,6 +15,13 @@
         #app {
             display: none;
         }
+        #logWindow {
+            width: 100%;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -41,12 +48,12 @@
         <p>
             名前選択: 
             <select id="userNameList">
-                <option value="プレイヤー1">エナ</option>
-                <option value="プレイヤー2">島長</option>
-                <option value="プレイヤー3">クヴァ</option>
-                <option value="プレイヤー3">ノル</option>
-                <option value="プレイヤー3">ベル</option>
-                <option value="プレイヤー3">ヘビチリ</option>
+                <option value="エナ" data-color="#c71585">エナ</option>
+                <option value="島長" data-color="#ffff00">島長</option>
+                <option value="クヴァ" data-color="#7fffd4">クヴァ</option>
+                <option value="ノル" data-color="#ff8c00">ノル</option>
+                <option value="ベル" data-color="#ffc0cb">ベル</option>
+                <option value="ヘビチリ" data-color="#00ff7f">ヘビチリ</option>
             </select>
             <input type="checkbox" id="userListCheckbox" onclick="toggleNameInput('list')">
         </p>
@@ -57,7 +64,7 @@
             ログ
             <button onclick="clearAllLogs()" style="margin-left: 10px;">すべて削除</button>
         </h3>
-        <textarea id="logWindow" style="width: 100%; height: 150px;" readonly></textarea>
+        <div id="logWindow"></div>
     </div>
 </body>
 </html>
